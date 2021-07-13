@@ -147,6 +147,7 @@ public class PartnerSamples {
 	                CloseableHttpResponse response = httpClient.execute(post)) {
 	             result = EntityUtils.toString(response.getEntity());
 	             System.out.println(result);
+	             
 	        }
     	}
     }
