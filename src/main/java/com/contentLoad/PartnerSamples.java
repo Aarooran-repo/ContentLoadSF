@@ -1,7 +1,16 @@
 package com.contentLoad;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.SaveResult;
@@ -28,7 +37,8 @@ public class PartnerSamples {
           config.setTraceMessage(true);
           config.setPrettyPrintXml(true);
  
-          partnerConnection = new PartnerConnection(config);          
+          partnerConnection = new PartnerConnection(config);     
+          System.out.println(partnerConnection.getSessionHeader().getSessionId());
  
           success = true;
         } catch (ConnectionException ce) {
@@ -38,6 +48,37 @@ public class PartnerSamples {
         }
  
         return success;
+      }
+    
+    public String getSessionId() {
+        boolean success = false;
+        String username = "admin@veck.be.dev";
+        String password = "@bsi567891Y0eF3l8qek7I1kLn0Yellv3C";
+        String authEndPoint = "https://test.salesforce.com/services/Soap/u/52.0";
+        String sessionId = null;
+ 
+        try {
+          ConnectorConfig config = new ConnectorConfig();
+          config.setUsername(username);
+          config.setPassword(password);
+          
+          config.setAuthEndpoint(authEndPoint);
+          config.setTraceFile("traceLogs.txt");
+          config.setTraceMessage(true);
+          config.setPrettyPrintXml(true);
+ 
+          partnerConnection = new PartnerConnection(config);     
+          sessionId = partnerConnection.getSessionHeader().getSessionId();
+          
+ 
+          success = true;
+        } catch (ConnectionException ce) {
+          ce.printStackTrace();
+        } catch (FileNotFoundException fnfe) {
+          fnfe.printStackTrace();
+        }
+ 
+        return sessionId;
       }
     
     public String createSample(List<SObject> lSobject) {
@@ -91,4 +132,23 @@ public class PartnerSamples {
         }
         return result;
     }
+    
+    public void createRest(List<StringBuilder> lJsonString,String sessionId) throws IOException {
+    	for(StringBuilder sbJson:lJsonString){
+    		String result = "";
+	    	HttpPost post = new HttpPost("https://veck--dev.my.salesforce.com/services/data/v44.0/sobjects/ContentVersion");
+	    	post.addHeader("Authorization","OAuth " + sessionId); 
+	    	post.addHeader("Content-Type","application/json");
+	    	System.out.println(sbJson.toString() );
+	    	System.out.println(sessionId );
+	    	// send a JSON data
+	        post.setEntity(new StringEntity(sbJson.toString()));
+	        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+	                CloseableHttpResponse response = httpClient.execute(post)) {
+	             result = EntityUtils.toString(response.getEntity());
+	             System.out.println(result);
+	        }
+    	}
+    }
+    
 }

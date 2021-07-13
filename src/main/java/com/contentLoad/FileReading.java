@@ -124,6 +124,77 @@ public class FileReading {
 		return ls;
 	}
 	
+	public List<StringBuilder> readDataLineByLineRest(String file,String sObjectType)
+	{
+		
+		List<StringBuilder> ls = new ArrayList<StringBuilder>();
+		//String jsonInputString = "{\"Title\": \"TITLE\", \"PathOnClient\": \"PATHONCLIENT\",\"VersionData\" :\"VERSIONDATA\",\"FirstPublishLocationId\":\"ID\",\"ContentLocation\":\"S\"}";
+		//String jsonInputString = "{\"name\": \"Upendra\", \"job\": \"Programmer\"}";
+		try {
+
+			// Create an object of filereader
+			// class with CSV file as a parameter.
+			FileReader filereader = new FileReader(file);
+			// create csvReader object passing
+			// file reader as a parameter
+			CSVReader csvReader = new CSVReader(filereader);
+			String[] nextRecord;
+			//SObject[] contacts = new SObject[1];
+			
+			
+			//sb.append("\n");
+			// we are going to read data line by line
+			int row = 0;
+			while ((nextRecord = csvReader.readNext()) != null) {
+				int col = 0;
+				SObject contentVersion = new SObject();
+				contentVersion.setType(sObjectType);
+				String title = null;
+				String versionData = null;
+				String pathOnClient = null;
+				String firstPublishLocationId=null;
+				StringBuilder json = new StringBuilder();
+				json.append("{");
+				for (String cell : nextRecord) {
+					if(row != 0 && col != 0 && col != 4 && col != 5 && col != 7){
+						if(col == 1){
+							//title = cell;
+							json.append("\"Title\":\""+cell+"\",");
+						}else if(col == 2){
+							//byte[] myArray = cell.getBytes();
+							//Blob blob = new SerialBlob(myArray );
+							//versionData = encodeBase64(cell);
+							json.append("\"VersionData\":\""+encodeBase64(cell)+"\",");
+							//contentVersion.setField("VersionData",convertFileContentToBlob(cell));
+						}else if(col == 3){
+							//pathOnClient = cell;
+							json.append("\"PathOnClient\":\""+cell+"\",");
+							//contentVersion.setField("PathOnClient",cell);
+						}else if(col == 6){
+							json.append("\"FirstPublishLocationId\":\""+cell+"\"");
+							//firstPublishLocationId = cell;
+						}
+						//System.out.print(cell + ",");
+					}
+					col++;
+				}
+				if(row != 0){
+					json.append("}");
+					//String json = jsonInputString.replace("TITLE", title).replace("PATHONCLIENT", pathOnClient).replace("ID", firstPublishLocationId).replace("VERSIONDATA", versionData);
+					ls.add(json);
+				}
+				row ++;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		//System.out.println(contentVersion);
+		//SObject[] array = new SObject[ls.size()];
+		//ls.toArray(array);
+		return ls;
+	}
+	
 	public String encodeBase64(String filePath) throws IOException{
 		byte[] fileContent = FileUtils.readFileToByteArray(new File(filePath));
 		String encodedString = Base64.getEncoder().encodeToString(fileContent);
