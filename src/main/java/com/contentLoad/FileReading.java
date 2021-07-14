@@ -16,6 +16,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.impl.StandardFileSystemManager;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 
 import com.opencsv.CSVReader;
 import com.sforce.soap.partner.sobject.SObject;
@@ -195,13 +201,48 @@ public class FileReading {
 		return ls;
 	}
 	
+	public List<EntityContentVersion> readDataLineByRest(String file)
+	{
+		List<EntityContentVersion> ls = new ArrayList<EntityContentVersion>();
+		try {
+			FileReader filereader = new FileReader(file);
+			CSVReader csvReader = new CSVReader(filereader);
+			String[] nextRecord;
+			int row = 0;
+			while ((nextRecord = csvReader.readNext()) != null) {
+				int col = 0;
+				EntityContentVersion entity = new EntityContentVersion();
+				for (String cell : nextRecord) {
+					if(row != 0 && col != 0 && col != 4 && col != 5 && col != 7){
+						if(col == 1){
+							entity.setTitle(cell);
+						}else if(col == 2){
+						}else if(col == 3){
+							entity.setPathOnClient(cell);
+							//contentVersion.setField("PathOnClient",cell);
+						}else if(col == 6){
+						}
+					}
+					col++;
+				}
+				if(row != 0){
+					ls.add(entity);
+				}
+				row ++;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ls;
+	}
 	public String encodeBase64(String filePath) throws IOException{
 		byte[] fileContent = FileUtils.readFileToByteArray(new File(filePath));
 		String encodedString = Base64.getEncoder().encodeToString(fileContent);
 		return encodedString;
 	}
 	
-	public static byte[] convertFileContentToBlob(String filePath) throws IOException {
+	public  byte[] convertFileContentToBlob(String filePath) throws IOException {
 		   byte[] fileContent = null;
 		   try {
 			fileContent = FileUtils.readFileToByteArray(new File(filePath));
@@ -211,6 +252,5 @@ public class FileReading {
 		   }
 		   return fileContent;
 	}
-	
 	
 }
