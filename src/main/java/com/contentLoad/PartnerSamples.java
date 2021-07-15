@@ -25,10 +25,8 @@ public class PartnerSamples {
 
 	public boolean login() {
 		boolean success = false;
-		// String username = "admin@veck.be.dev";
-		String username = "aaroor121819@gmail.com";
-		String password = "ag@121819MulY8HGcH3CYlPuhBnqiAhuW";
-		// String password = "@bsi567891Y0eF3l8qek7I1kLn0Yellv3C";
+		String username = "";
+		String password = "";
 		String authEndPoint = "https://login.salesforce.com/services/Soap/u/52.0";
 
 		try {
@@ -57,8 +55,8 @@ public class PartnerSamples {
 
 	public String getSessionId() {
 		boolean success = false;
-		String username = "aaroor121819@gmail.com";
-		String password = "ag@121819MulY8HGcH3CYlPuhBnqiAhuW";
+		String username = "";
+		String password = "";
 		String authEndPoint = "https://login.salesforce.com/services/Soap/u/52.0";
 		String sessionId = null;
 

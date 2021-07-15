@@ -134,8 +134,8 @@ public class SalesforceAPI {
     private BulkConnection getBulkConnection()
           throws ConnectionException, AsyncApiException {
         ConnectorConfig partnerConfig = new ConnectorConfig();
-        partnerConfig.setUsername("admin@veck.be.dev");
-        partnerConfig.setPassword("@bsi567891Y0eF3l8qek7I1kLn0Yellv3C");
+        partnerConfig.setUsername("");
+        partnerConfig.setPassword("");
         partnerConfig.setAuthEndpoint("https://test.salesforce.com/services/Soap/u/52.0");
         // Creating the connection automatically handles login and stores
         // the session in partnerConfig
